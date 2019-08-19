@@ -1,1 +1,21 @@
-{"version":2,"builds":[{"src":"index.js","use":"@now/node"}],"routes":[{"src":"/.*","dest":"index.js"}],"name":"my-office-graphiql"}
+{
+  "version":2,
+  "name":"my-office-graphiql",
+  "builds":[
+    {"src":"index.js","use":"@now/node"}
+  ],
+  "routes": [
+    {
+      "src":"/.*", "dest":"index.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+      }
+    }
+  ],
+  "env": {
+    "DB_USER": "@atlas-db-user",
+    "DB_PASS": "@atlas-db-password"
+  }
+}
