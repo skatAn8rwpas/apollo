@@ -2,7 +2,7 @@
   "name": "improved-apollo-example",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "200.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server-micro": "^2.4.8",
+    "cors": "^2.8.5",
     "graphql": "^14.1.1",
     "mongodb": "^3.2.7"
   }

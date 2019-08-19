@@ -1,24 +1,7 @@
 const { ApolloServer, gql } = require('apollo-server-micro');
+const cors = require('cors')({origin: true})
 const { connect } = require('./src/config')
-const {ObjectID} = require('mongodb')
-
-
-
-
-// let bookId = 5;
-// const books = [
-//   { id: 1, title: 'The Trials of Brother Jero', rating: 8, authorId: 1 },
-//   { id: 2, title: 'Half of a Yellow Sun', rating: 9, authorId: 3 },
-//   { id: 3, title: 'Americanah', rating: 9, authorId: 3 },
-//   { id: 4, title: 'King Baabu', rating: 9, authorId: 1 },
-//   { id: 5, title: 'Children of Blood and Bone', rating: 8, authorId: 2 },
-// ];
-
-// const authors = [
-//   { id: 1, firstName: 'Wole', lastName: 'Soyinka' },
-//   { id: 2, firstName: 'Tomi', lastName: 'Adeyemi' },
-//   { id: 3, firstName: 'Chimamanda', lastName: 'Adichie' },
-// ];
+const { ObjectID } = require('mongodb')
 
 const typeDefs = gql`
   type Author {
@@ -67,19 +50,11 @@ const resolvers = {
     ),
   },
   Mutation: {
-    addBook: (_, { title, rating, authorId }) => {
-      bookId++;
-
-      const newBook = {
-        id: bookId,
-        title,
-        rating,
-        authorId,
-      };
-
-      books.push(newBook);
-      return newBook;
-    },
+    addBook: (_, { title, rating, authorId }) => connect().then(async client => {
+      const newBook = {title, rating, authorId: new ObjectID(authorId)}
+      const result = await client.db('test').collection('books').insertOne(newBook)
+      return result.ops[0]
+    }),
 
     addAuthor: (root, {firstName, lastName}) => connect().then(async client => {
       const result = await client.db('test').collection('authors').insertOne({ firstName, lastName })
@@ -92,7 +67,6 @@ const resolvers = {
       await client.db('test').collection('books').find({authorId: new ObjectID(author._id)}).toArray()
     )
   },
-
   Book: {
     author: book => connect().then(async (client) =>
       await client.db('test').collection('authors').findOne({_id: new ObjectID(book.authorId)})
@@ -107,4 +81,7 @@ const server = new ApolloServer({
   playground: true,
 });
 
-module.exports = server.createHandler();
+const handler = server.createHandler()
+
+module.exports = (req, res) =>
+  cors(req, res, () => handler(req, res))
