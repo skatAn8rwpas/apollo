@@ -1,12 +1,6 @@
 {
   "version":2,
   "name":"my-office-graphiql",
-  "builds":[
-    {"src":"index.js","use":"@now/node"}
-  ],
-  "routes": [
-    { "src": "/.*", "dest": "index.js"}
-  ],
   "env": {
     "DB_USER": "@atlas-db-user",
     "DB_PASS": "@atlas-db-password"
